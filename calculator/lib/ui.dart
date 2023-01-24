@@ -1,4 +1,6 @@
+
 import 'package:flutter/material.dart';
+import 'package:math_expressions/math_expressions.dart';
 import 'colours.dart';
 
 class CalculatorApp extends StatefulWidget {
@@ -14,9 +16,40 @@ class CalculatorAppState extends State<CalculatorApp> {
   var input = "";
   var output = "";
   var operator = "";
+  var hideInput = false;
+  double outputSize = 24.0;
 
   onButtonClick(value) {
-    print(value);
+    if (value == "AC") {
+      input = "";
+      output = "";
+    } else if (value == "\u{2190}") {
+      if (input.isNotEmpty) {
+        input = input.substring(0, input.length - 1);
+      }
+    } else if (value == "=") {
+      if (input.isNotEmpty) {
+        var userInput = input;
+        userInput = input.replaceAll("x", "*");
+        userInput = input.replaceAll("\u{00F7}", "/");
+        Parser p = Parser();
+        Expression expression = p.parse(userInput);
+        ContextModel cm = ContextModel();
+        var finalValue = expression.evaluate(EvaluationType.REAL, cm);
+        output = finalValue.toString();
+        if (output.endsWith(".0")) {
+          output = output.substring(0, output.length - 2);
+        } 
+        input = output;
+        hideInput = true;
+        outputSize = 48;
+      }
+    } else {
+      input += value;
+      hideInput = false;
+      outputSize = 28;
+    }
+    setState(() {});
   }
 
   @override
@@ -35,7 +68,7 @@ class CalculatorAppState extends State<CalculatorApp> {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  input,
+                  hideInput ? "" : input,
                   style: const TextStyle(fontSize: 48, color: Colors.white70),
                 ),
                 const SizedBox(
@@ -43,7 +76,8 @@ class CalculatorAppState extends State<CalculatorApp> {
                 ),
                 Text(
                   output,
-                  style: const TextStyle(fontSize: 28, color: Colors.white38),
+                  style: TextStyle(
+                      fontSize: outputSize, color: Colors.white38),
                 ),
                 const SizedBox(
                   height: 10,
@@ -70,7 +104,7 @@ class CalculatorAppState extends State<CalculatorApp> {
               button(text: "7"),
               button(text: "8"),
               button(text: "9"),
-              button(text: "\u{00D7}", buttonColors: buttonColor),
+              button(text: "x", buttonColors: buttonColor),
             ],
           ),
           Row(
