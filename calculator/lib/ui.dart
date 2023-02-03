@@ -31,7 +31,6 @@ class CalculatorAppState extends State<CalculatorApp> {
       if (input.isNotEmpty) {
         var userInput = input;
         userInput = input.replaceAll("x", "*");
-        userInput = input.replaceAll("\u{00F7}", "/");
         Parser p = Parser();
         Expression expression = p.parse(userInput);
         ContextModel cm = ContextModel();
@@ -96,7 +95,7 @@ class CalculatorAppState extends State<CalculatorApp> {
                   buttonColors: operatorColor,
                   textColor: orangecolor),
               button(text: "", textColor: Colors.transparent),
-              button(text: "\u{00F7}", buttonColors: operatorColor),
+              button(text: "/", buttonColors: operatorColor),
             ],
           ),
           Row(
